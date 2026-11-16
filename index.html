@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101f2d" />
+  <meta name="description" content="NEXUS — plataforma demonstrativa de localização, gestão e acompanhamento de construções civis no Recife." />
+  <title>NEXUS | Urban Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#inicio" aria-label="NEXUS início">
+        <span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 31V9h5l16 16V9h5v22h-5L12 15v16z" fill="currentColor"/><path d="M7 35h26" stroke="#43c6a5" stroke-width="3" stroke-linecap="round"/></svg></span>
+        <span class="brand-copy"><strong>NEXUS</strong><small>URBAN INTELLIGENCE</small></span>
+      </a>
+
+      <div class="workspace-label">ESPAÇO DE TRABALHO</div>
+      <div class="workspace-card">
+        <span class="workspace-icon">REC</span>
+        <span><strong>Recife, Pernambuco</strong><small>Projeto demonstrativo</small></span>
+        <span class="workspace-chevron">⌄</span>
+      </div>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button class="nav-item is-active" data-view="dashboard"><span class="nav-icon">▦</span><span>Visão geral</span></button>
+        <button class="nav-item" data-view="map"><span class="nav-icon">⌖</span><span>Mapa inteligente</span><span class="nav-pill">3D</span></button>
+        <button class="nav-item" data-view="projects"><span class="nav-icon">▤</span><span>Obras e projetos</span></button>
+        <button class="nav-item" data-view="timeline"><span class="nav-icon">◷</span><span>Cronogramas</span></button>
+        <button class="nav-item" data-view="reports"><span class="nav-icon">▥</span><span>Relatórios</span></button>
+        <button class="nav-item" data-view="professionals"><span class="nav-icon">♧</span><span>Profissionais</span></button>
+      </nav>
+
+      <div class="sidebar-divider"></div>
+      <div class="workspace-label">FERRAMENTAS</div>
+      <button class="nav-item nav-tool" id="sidebarMeasure"><span class="nav-icon">⌁</span><span>Medição geográfica</span></button>
+      <button class="nav-item nav-tool" id="sidebarExport"><span class="nav-icon">⇩</span><span>Exportar dados</span></button>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-status"><span class="status-dot"></span><span>Ambiente demonstrativo</span></div>
+      <div class="profile-mini">
+        <div class="avatar">NX</div>
+        <span><strong>Equipe NEXUS</strong><small>Administrador local</small></span>
+        <span class="profile-more">···</span>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Workspace</span><b>/</b><strong id="breadcrumbCurrent">Visão geral</strong></div>
+        <div class="topbar-actions">
+          <label class="global-search"><span>⌕</span><input id="globalSearch" type="search" placeholder="Buscar obras, bairros ou responsáveis..." autocomplete="off" /><kbd>Ctrl K</kbd></label>
+          <button class="icon-button" id="themeToggle" title="Alternar mapa diurno/noturno" aria-label="Alternar mapa diurno ou noturno">☾</button>
+          <button class="icon-button notification-button" id="notificationButton" title="Avisos demonstrativos" aria-label="Avisos">♧<i></i></button>
+          <div class="topbar-avatar">NX</div>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <section class="page-heading" id="pageHeading">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> CENTRO DE OPERAÇÕES</div>
+            <h1 id="pageTitle">Visão geral</h1>
+            <p id="pageSubtitle">Acompanhe os projetos e a dinâmica das construções em Recife.</p>
+          </div>
+          <div class="heading-actions">
+            <span class="date-chip" id="currentDate">—</span>
+            <button class="button button-primary" id="newProjectButton"><span>＋</span> Nova construção</button>
+          </div>
+        </section>
+
+        <section class="stats-grid" id="statsGrid" aria-label="Indicadores gerais">
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon teal">▤</span><span class="stat-caption">PORTFÓLIO</span></div><strong id="totalProjects">0</strong><div class="stat-bottom"><span class="stat-label">Obras cadastradas</span><span class="stat-foot">Base local</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon amber">◷</span><span class="stat-caption">EXECUÇÃO</span></div><strong id="activeProjects">0</strong><div class="stat-bottom"><span class="stat-label">Em andamento</span><span class="stat-foot">Acompanhamento</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">◈</span><span class="stat-caption">PLANEJAMENTO</span></div><strong id="plannedProjects">0</strong><div class="stat-bottom"><span class="stat-label">Projetos planejados</span><span class="stat-foot">Próximas etapas</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon green">✓</span><span class="stat-caption">ENTREGAS</span></div><strong id="completedProjects">0</strong><div class="stat-bottom"><span class="stat-label">Obras concluídas</span><span class="stat-foot">Histórico</span></div></article>
+        </section>
+
+        <section class="map-panel" id="mapPanel">
+          <div class="panel-heading map-panel-heading">
+            <div><div class="panel-kicker">GEOPROCESSAMENTO URBANO</div><h2>Mapa inteligente de Recife</h2><p>Explore construções, infraestrutura e localização dos projetos.</p></div>
+            <div class="map-heading-actions"><span class="map-live"><i></i> VISUALIZAÇÃO 3D</span><button class="button button-quiet" id="mapExpandButton">⛶ Expandir mapa</button></div>
+          </div>
+          <div class="map-layout">
+            <div class="map-stage" id="mapStage">
+              <div id="mapa" class="map-canvas" aria-label="Mapa interativo de Recife"></div>
+              <div class="map-fallback" id="mapFallback"><span class="fallback-symbol">⌖</span><strong>Área de visualização do mapa</strong><small>O mapa 3D será carregado pelo módulo que já existe no seu projeto.</small></div>
+              <div class="map-top-left map-overlay">
+                <div class="map-location-chip"><span>⌖</span><span><strong>Recife</strong><small>Pernambuco · Brasil</small></span></div>
+                <div class="map-coordinate" id="mapCoordinates">-8.0476, -34.8770</div>
+              </div>
+              <div class="map-control-stack map-overlay">
+                <button class="map-control" id="homeBtn" title="Voltar à visão inicial">⌂</button>
+                <button class="map-control" id="locateBtn" title="Minha localização">◎</button>
+                <button class="map-control" id="toggle3dBtn" title="Alternar inclinação 3D">3D</button>
+                <button class="map-control" id="mapFullscreenButton" title="Tela cheia">⛶</button>
+              </div>
+              <div class="map-bottom-left map-overlay"><span class="map-status-dot"></span><span id="mapStatus">Aguardando conexão com o mapa existente...</span></div>
+              <div class="map-legend map-overlay"><span><i class="legend-dot orange"></i> Em andamento</span><span><i class="legend-dot blue"></i> Planejamento</span><span><i class="legend-dot green"></i> Concluída</span></div>
+              <div class="measure-hint map-overlay" id="measureHint" hidden>Clique no mapa para adicionar pontos. <button id="finishMeasureButton">Finalizar</button><button id="clearMeasureButton">Limpar</button></div>
+            </div>
+            <aside class="map-side-panel">
+              <div class="side-panel-title"><div><span class="panel-kicker">CONTROLE DO MAPA</span><h3>Camadas urbanas</h3></div><button class="text-button" id="resetLayersButton">Redefinir</button></div>
+              <div class="layer-list">
+                <label class="layer-row"><span class="layer-symbol buildings">▥</span><span><strong>Edificações 3D</strong><small>Volumes e estruturas</small></span><input type="checkbox" data-layer="buildings" checked /><i class="switch"></i></label>
+                <label class="layer-row"><span class="layer-symbol constructions">▦</span><span><strong>Obras cadastradas</strong><small>Projetos do NEXUS</small></span><input type="checkbox" data-layer="projects" checked /><i class="switch"></i></label>
+                <label class="layer-row"><span class="layer-symbol roads">⇢</span><span><strong>Vias e mobilidade</strong><small>Rede viária</small></span><input type="checkbox" data-layer="roads" checked /><i class="switch"></i></label>
+                <label class="layer-row"><span class="layer-symbol parks">♧</span><span><strong>Áreas verdes</strong><small>Parques e praças</small></span><input type="checkbox" data-layer="parks" checked /><i class="switch"></i></label>
+                <label class="layer-row"><span class="layer-symbol water">≈</span><span><strong>Água e hidrografia</strong><small>Rios e canais</small></span><input type="checkbox" data-layer="water" checked /><i class="switch"></i></label>
+              </div>
+              <div class="side-panel-divider"></div>
+              <div class="side-panel-title"><div><span class="panel-kicker">FERRAMENTAS</span><h3>Análise geográfica</h3></div></div>
+              <button class="tool-row" id="measureButton"><span class="tool-icon">⌁</span><span><strong>Medir distância e área</strong><small>Desenhe pontos no mapa</small></span><span>›</span></button>
+              <button class="tool-row" id="nightModeButton"><span class="tool-icon">☾</span><span><strong>Modo noturno</strong><small>Alterar iluminação visual</small></span><span>›</span></button>
+              <div class="measure-result" id="measureResult" hidden><span>RESULTADO DA MEDIÇÃO</span><strong id="measureValue">0 m</strong><small id="measureDetail">Adicione pontos no mapa.</small></div>
+              <div class="map-side-note"><span>ⓘ</span><p>As camadas dependem das informações disponíveis no estilo do mapa conectado. Dados de demonstração não representam levantamentos oficiais.</p></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="dashboard-bottom" id="dashboardBottom">
+          <article class="content-card recent-card">
+            <div class="card-heading"><div><span class="panel-kicker">PORTFÓLIO</span><h2>Projetos recentes</h2></div><button class="text-button" data-open-view="projects">Ver todos <span>→</span></button></div>
+            <div class="recent-project-list" id="recentProjects"></div>
+          </article>
+          <article class="content-card progress-card">
+            <div class="card-heading"><div><span class="panel-kicker">VISÃO DO PORTFÓLIO</span><h2>Distribuição dos projetos</h2></div><span class="card-menu">···</span></div>
+            <div class="distribution" id="projectDistribution"></div>
+            <div class="distribution-legend"><span><i class="legend-dot orange"></i> Em andamento</span><span><i class="legend-dot blue"></i> Planejamento</span><span><i class="legend-dot green"></i> Concluída</span></div>
+          </article>
+        </section>
+
+        <section class="alternate-view" id="projectsView" hidden>
+          <div class="view-toolbar"><div><h2>Obras e projetos</h2><p>Cadastre, consulte e acompanhe os empreendimentos.</p></div><div class="filters"><input id="projectSearch" class="input-control" type="search" placeholder="Pesquisar projeto..." /><select id="statusFilter" class="input-control"><option value="todos">Todos os status</option><option>Em andamento</option><option>Planejamento</option><option>Concluída</option></select><select id="categoryFilter" class="input-control"><option value="todas">Todas as categorias</option><option>Residencial</option><option>Comercial</option><option>Infraestrutura</option><option>Reforma</option><option>Urbanização</option><option>Mobilidade</option></select></div></div>
+          <div class="projects-grid" id="projectsList"></div>
+          <div class="empty-state" id="projectsEmpty" hidden><span>▤</span><strong>Nenhum projeto encontrado</strong><p>Tente alterar os filtros ou cadastre uma nova construção.</p></div>
+        </section>
+
+        <section class="alternate-view" id="timelineView" hidden>
+          <div class="view-toolbar"><div><h2>Cronogramas</h2><p>Etapas, datas previstas e progresso informado dos projetos.</p></div></div>
+          <div class="timeline-list" id="timelineList"></div>
+        </section>
+
+        <section class="alternate-view" id="reportsView" hidden>
+          <div class="view-toolbar"><div><h2>Relatórios e indicadores</h2><p>Resumo estatístico gerado a partir dos registros locais.</p></div><button class="button button-secondary" id="exportReportsButton">⇩ Exportar CSV</button></div>
+          <div class="report-grid" id="reportGrid"></div>
+          <div class="content-card report-note"><strong>Sobre os indicadores</strong><p>Os números são calculados a partir dos projetos cadastrados neste navegador. Não são dados oficiais da Prefeitura do Recife nem informações coletadas em tempo real.</p></div>
+        </section>
+
+        <section class="alternate-view" id="professionalsView" hidden>
+          <div class="view-toolbar"><div><h2>Profissionais e responsáveis</h2><p>Responsáveis associados aos projetos cadastrados.</p></div></div>
+          <div class="professionals-grid" id="professionalsList"></div>
+        </section>
+
+        <footer class="app-footer"><span>© 2026 NEXUS Urban Intelligence</span><span>Projeto acadêmico demonstrativo · Recife, PE</span><span class="footer-status"><i></i> Dados armazenados localmente</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="projectModal" hidden>
+    <section class="project-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header"><div><span class="panel-kicker">NEXUS PROJECT MANAGEMENT</span><h2 id="modalTitle">Nova construção</h2><p>Preencha as informações do empreendimento.</p></div><button class="modal-close" type="button" data-close-modal aria-label="Fechar janela">×</button></header>
+      <form id="projectForm">
+        <input type="hidden" id="projectId" />
+        <div class="form-section-title">IDENTIFICAÇÃO DO PROJETO</div>
+        <label class="form-field full"><span>Nome da construção *</span><input class="input-control" id="projectName" required maxlength="90" placeholder="Ex.: Edificação Multifuncional" /></label>
+        <div class="form-grid">
+          <label class="form-field"><span>Categoria *</span><select class="input-control" id="projectCategory" required><option>Residencial</option><option>Comercial</option><option>Infraestrutura</option><option>Reforma</option><option>Urbanização</option><option>Mobilidade</option></select></label>
+          <label class="form-field"><span>Situação *</span><select class="input-control" id="projectStatus" required><option>Planejamento</option><option>Em andamento</option><option>Concluída</option></select></label>
+          <label class="form-field"><span>Bairro *</span><input class="input-control" id="projectNeighborhood" required placeholder="Ex.: Boa Viagem" /></label>
+          <label class="form-field"><span>Responsável</span><input class="input-control" id="projectResponsible" placeholder="Empresa ou profissional" /></label>
+          <label class="form-field full"><span>Endereço completo *</span><input class="input-control" id="projectAddress" required placeholder="Rua, número, bairro e cidade" /></label>
+        </div>
+        <div class="form-section-title">LOCALIZAÇÃO GEOGRÁFICA</div>
+        <div class="form-grid">
+          <label class="form-field"><span>Latitude *</span><input class="input-control" id="projectLatitude" type="number" step="any" required placeholder="-8.0618" /></label>
+          <label class="form-field"><span>Longitude *</span><input class="input-control" id="projectLongitude" type="number" step="any" required placeholder="-34.8720" /></label>
+        </div>
+        <div class="form-section-title">PRAZOS E ACOMPANHAMENTO</div>
+        <div class="form-grid">
+          <label class="form-field"><span>Progresso (%)</span><input class="input-control" id="projectProgress" type="number" min="0" max="100" value="0" /></label>
+          <label class="form-field"><span>Orçamento previsto (R$)</span><input class="input-control" id="projectBudget" type="number" min="0" step="0.01" placeholder="Ex.: 350000" /></label>
+          <label class="form-field"><span>Início do projeto</span><input class="input-control" id="projectStart" type="date" /></label>
+          <label class="form-field"><span>Previsão de conclusão</span><input class="input-control" id="projectDue" type="date" /></label>
+        </div>
+        <label class="form-field full"><span>Descrição</span><textarea class="input-control" id="projectDescription" rows="3" maxlength="700" placeholder="Descreva o objetivo, as características e as observações do projeto..."></textarea></label>
+        <div class="form-note">Os dados cadastrados nesta versão ficam salvos localmente neste navegador. Para compartilhar entre usuários, será necessário conectar um banco de dados.</div>
+        <div class="modal-actions"><button class="button button-quiet" type="button" data-close-modal>Cancelar</button><button class="button button-primary" type="submit">Salvar construção</button></div>
+      </form>
+    </section>
+  </div>
+
+  <aside class="detail-drawer" id="detailDrawer" aria-labelledby="detailTitle" hidden>
+    <div class="drawer-header"><span class="panel-kicker">DETALHES DO EMPREENDIMENTO</span><button class="modal-close" id="closeDrawer" aria-label="Fechar detalhes">×</button></div>
+    <div id="detailContent"></div>
+  </aside>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- IDs de compatibilidade para scripts antigos do NEXUS; não fazem parte da nova interface visível. -->
+  <div class="legacy-compat" aria-hidden="true">
+    <input id="searchInput" /><button id="clearSearch"></button><div id="searchSuggestions"></div><button id="clearHistory"></button><div id="searchHistory"></div>
+    <span id="totalObras"></span><span id="obrasAndamento"></span><span id="obrasConcluidas"></span>
+    <select id="filtroStatus"><option value="todos">Todos</option></select><select id="filtroCategoria"><option value="todas">Todas</option></select><div id="listaObras"></div><div id="lista-lugares"></div><span id="contador"></span><input id="pesquisaObras" /><input id="pesquisa" /><select id="categoria"><option value="todas">Todas</option></select>
+    <button id="fullscreenBtn"></button><span id="clock"></span>
+  </div>
+
+  <script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js" defer></script>
+  <!-- Preserve os scripts antigos do mapa copiando-os para public/, conforme o README. -->
+  <script src="/dados/config.js" defer onerror="this.dataset.missing='true'"></script>
+  <script src="/dados/obras.js" defer onerror="this.dataset.missing='true'"></script>
+  <script src="/js/mapa3d.js" defer onerror="this.dataset.missing='true'"></script>
+  <script src="/script.js" defer onerror="this.dataset.missing='true'"></script>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
